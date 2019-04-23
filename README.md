@@ -8,7 +8,7 @@ Chat App is an application built using NodeJS, ExpressJS, Socket.io, MongoDB and
 1.  Installation
 2.  Todo List
 
-### Installation
+## Installation
 To start the web server you have to installed these programs:
 
 1.  **MongoDB**
@@ -27,7 +27,7 @@ npm run dev
 ```
 Now open your browser and visit: http://localhost:3000/
 
-### Todo List
+## Todo List
 - [ ] Implement show message sender's username in chat room
 - [ ] Implement user is typing feature in chat room
 - [ ] Implement private chat room for two or more users.
