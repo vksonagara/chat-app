@@ -1,0 +1,84 @@
+<%- include('partials/header') -%>
+
+    <div class="container" style="padding-top: 60px;">
+        <div class="columns is-centered">
+            <div class="column is-6 has-background-light">
+                <h2 class="subtitle">Create Room</h2><hr style="background-color: black; height: 1px;">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Room Title</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input type="text" class="input" id="roomTitle">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" class="button" id="createButton">
+                                    Create
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="message is-danger">
+                </div>
+            </div>
+        </div>
+        <div class="columns is-centered" style="padding-top: 30px;">
+            <div class="column is-6 has-background-light">
+                <h2 class="subtitle">List of Rooms</h2><hr style="background-color: black; height: 1px;">
+                <ul id="roomsList">
+                    <% rooms.forEach(room => { %>
+                        <li>
+                            <div class="level">
+                                <%= room.title %>  <a class="button" style="float: right; clear: both;" href="/room/<%= room._id %>">Join</a>
+                            </div>
+                        </li>
+                    <% }); %>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io('/rooms');
+
+        // Create new room on create button click
+        $('#createButton').on('click', (event) => {
+            const roomTitle = $('#roomTitle').val();
+            $('#roomTitle').val('');
+            if(roomTitle === '') {
+                alert('Room title can not be empty');
+            }
+            else {
+                socket.emit('createRoom', roomTitle);
+            }
+        });
+
+        // Check for updateRoomsList event
+        socket.on('updateRoomsList', (newRoom) => {
+            if(newRoom.error) {
+                alert('Room with this name already exists!');
+            } else {
+                $('#roomsList').append(`
+                <li>
+                    <div class="level">
+                        ${newRoom.title}  <a class="button" style="float: right; clear: both;" href="../room/${newRoom._id}">Join</a>
+                    </div>
+                </li>
+                `);
+            }
+        });
+
+    </script>
+
+<%- include('partials/footer') -%>

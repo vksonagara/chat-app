@@ -1,0 +1,108 @@
+<%- include('partials/header'); -%>
+    
+    <div class="fluid-container" style="height: 95vh; padding-top: 100px;">
+        <div class="columns is-centered" style="height: 80%">
+            <div class="column is-three-fifths is-marginless is-paddingless">
+                <div class="columns is-marginless is-paddingless" style="height: 100%;">
+                    <div class="column is-4 has-background-primary">
+                    </div>
+                    <div class="column has-background-link">
+                        <h2 class="title has-text-white">Sign Up Form</h2><hr style="height: 1px;">
+                        <form action="/signup" method="POST" id="signupForm">
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                    <label class="label has-text-white">Username</label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="control">
+                                            <input type="text" class="input" name="username" id="username">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                    <label class="label has-text-white">Password</label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="control">
+                                            <input type="password" class="input" name="password" id="password">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                    <label class="label has-text-white">Confirm Password</label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="control">
+                                            <input type="password" class="input" id="confirmPassword">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                </div>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="control">
+                                            <button type="submit" class="button is-light" id="signupButton">
+                                                Sign Up
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <% if(error_message.length > 0) { %>
+                            <div class="message is-danger" style="margin-top: 20px;">
+                                <div class="message-body">
+                                    <% error_message.forEach(msg => { %>
+                                        <li><%= msg %></li>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('button#signupButton').on('click', (event) => {
+            event.preventDefault();
+            let username = $('input#username').val(),
+                password = $('input#password').val(),
+                confirmPassword = $('input#confirmPassword').val();
+            let regex = /^[a-zA-Z0-9]+$/;
+            if(username === '' || password === '' || !regex.test(username) || (password !== confirmPassword)) {
+                if(username === '') {
+                    alert('username is empty');
+                    return false;
+                }
+                if(password === '') {
+                    alert('password is empty');
+                    return false;
+                }
+                if(!regex.test(username)) {
+                    alert('username should be alphanumeric');
+                    return false;
+                }
+                if(password !== confirmPassword) {
+                    alert('password does not match');
+                    return false;
+                }
+            }
+            else {
+                $('#signupForm').submit();
+            }
+        });
+    </script>
+
+<%- include('partials/footer'); -%>

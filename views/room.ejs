@@ -1,0 +1,100 @@
+<%- include('partials/header') -%>
+
+    <div class="container" style="padding-top: 60px;">
+        <div class="columns">
+            <div class="column is-3 has-background-light" style="margin-right: 10px; height: 80vh; overflow-y:auto">
+                <span class="subtitle">Online</span><hr style="background-color: black; height: 1px;">
+                <ul id="onlineUsersList">
+                    
+                </ul>
+            </div>
+            <div class="column has-background-light" style="height: 80vh;">
+                <span class="subtitle" id="roomTitle" roomId="<%= room._id %>"><%= room.title %></span><hr style="background-color: black; height: 1px;">
+                <div class="columns" style="height: 80%; overflow-y:auto">
+                    <div class="column" id="chatMessages">
+                        
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <form action="#">
+                            <div class="field has-addons" style="width: 100%;">
+                                <div class="control is-expanded">
+                                    <input class="input" type="text" id="inputMessage">
+                                </div>
+                                <div class="control">
+                                    <button type="submit" class="button is-info" id="sendMessageButton">
+                                    Enter
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io('/chatroom');
+
+        // When socket connects to chatroom namespace join the room with id
+        socket.on('connect', () => {
+            
+            // Get the room id
+            const roomId = $('#roomTitle').attr('roomId');
+            
+            // Join room with id
+            socket.emit('join', roomId);
+
+            // When other users is connects to the room
+            socket.on('updateUsersList', (users) => {
+                users.forEach(user => {
+                    $('#onlineUsersList').append(`<li id="${user._id}">${user.username}</li>`);
+                });
+            });
+
+            // When other users disconnects from the room
+            socket.on('removeUser', (userId) => {
+                $(`#${userId}`).remove();
+            });
+
+            // Send message to other users in chat room
+            $('form').on('submit', (event) => {
+                event.preventDefault();
+                if($('#inputMessage').val() !== '') {
+                    let msg = $('#inputMessage').val();
+                    $('#inputMessage').val('');
+                    socket.emit('newMessage', { text: msg, roomId });
+                    $('#chatMessages').append(`
+                        <article class="media">
+                            <div class="media-content">
+                                <div class="content">
+                                <p>
+                                    ${msg}
+                                </p>
+                            </div>
+                        </article>
+                    `);
+                }
+            });
+
+            // When other users send messages in chat room
+            socket.on('addMessage', (msg) => {
+                $('#chatMessages').append(`
+                    <article class="media">
+                        <div class="media-content">
+                            <div class="content">
+                            <p>
+                                ${msg}
+                            </p>
+                        </div>
+                    </article>
+                `);
+            });
+
+            
+        });
+    </script>
+
+<%- include('partials/footer') -%>
